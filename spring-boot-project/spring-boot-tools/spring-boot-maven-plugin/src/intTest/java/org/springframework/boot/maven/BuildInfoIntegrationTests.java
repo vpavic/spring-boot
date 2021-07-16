@@ -35,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Integration tests for the Maven plugin's build info support.
  *
  * @author Andy Wilkinson
+ * @author Vedran Pavic
  */
 @ExtendWith(MavenBuildExtension.class)
 public class BuildInfoIntegrationTests {
@@ -89,6 +90,13 @@ public class BuildInfoIntegrationTests {
 				.doesNotContainBuildTime()));
 	}
 
+	@TestTemplate
+	void whenProjectNameIsNotSetItDoesNotAppearInGeneratedBuildInfo(MavenBuild mavenBuild) {
+		mavenBuild.project("build-info-disable-build-name").execute(buildInfo((buildInfo) -> assertThat(buildInfo)
+				.hasBuildGroup("org.springframework.boot.maven.it").hasBuildArtifact("build-info-disable-build-name")
+				.doesNotContainBuildName().hasBuildVersion("0.0.1.BUILD-SNAPSHOT").containsBuildTime()));
+	}
+
 	private ProjectCallback buildInfo(Consumer<AssertProvider<BuildInfoAssert>> buildInfo) {
 		return buildInfo("target/classes/META-INF/build-info.properties", buildInfo);
 	}
@@ -136,6 +144,10 @@ public class BuildInfoIntegrationTests {
 
 		BuildInfoAssert hasBuildName(String expected) {
 			return containsEntry("build.name", expected);
+		}
+
+		BuildInfoAssert doesNotContainBuildName() {
+			return doesNotContainKey("build.name");
 		}
 
 		BuildInfoAssert hasBuildVersion(String expected) {
