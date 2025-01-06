@@ -26,6 +26,9 @@ plugins {
 description = "Spring Boot Developer Tools"
 
 configurations {
+	livereload {
+		extendsFrom dependencyManagement
+	}
 	intTestDependencies {
 		extendsFrom dependencyManagement
 	}
@@ -34,6 +37,8 @@ configurations {
 dependencies {
 	api(project(":core:spring-boot"))
 	api(project(":core:spring-boot-autoconfigure"))
+
+	livereload("org.webjars.npm:livereload-js")
 
 	intTestDependencies(project(":core:spring-boot-autoconfigure"))
 	intTestDependencies(project(":module:spring-boot-http-converter"))
@@ -68,6 +73,7 @@ dependencies {
 	optional("org.springframework:spring-jdbc")
 	optional("org.springframework:spring-orm")
 	optional("org.springframework:spring-web")
+	optional("org.springframework:spring-webmvc")
 	optional("org.springframework.security:spring-security-config")
 	optional("org.springframework.security:spring-security-web")
 	optional("org.springframework.data:spring-data-redis")
@@ -97,6 +103,16 @@ dependencies {
 	testRuntimeOnly("org.aspectj:aspectjweaver")
 	testRuntimeOnly("org.yaml:snakeyaml")
 	testRuntimeOnly("io.r2dbc:r2dbc-h2")
+}
+
+processResources {
+	from(zipTree(configurations.livereload.incoming.files.singleFile)) {
+		include "**/dist/livereload.js"
+		eachFile {
+			relativePath = new RelativePath(true, "livereload", relativePath.segments.last())
+		}
+		includeEmptyDirs = false
+	}
 }
 
 tasks.register("syncIntTestDependencies", Sync) {

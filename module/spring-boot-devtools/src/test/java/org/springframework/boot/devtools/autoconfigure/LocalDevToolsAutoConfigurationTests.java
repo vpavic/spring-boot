@@ -38,6 +38,7 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
 import org.springframework.boot.devtools.classpath.ClassPathChangedEvent;
 import org.springframework.boot.devtools.classpath.ClassPathFileSystemWatcher;
+import org.springframework.boot.devtools.livereload.LiveReloadScriptInjectingFilter;
 import org.springframework.boot.devtools.livereload.LiveReloadServer;
 import org.springframework.boot.devtools.restart.FailureHandler;
 import org.springframework.boot.devtools.restart.MockRestartInitializer;
@@ -148,11 +149,25 @@ class LocalDevToolsAutoConfigurationTests {
 	}
 
 	@Test
+	void liveReloadFilter() throws Exception {
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("spring.devtools.livereload.enabled", true);
+		this.context = getContext(() -> initializeAndRun(Config.class, properties));
+		LiveReloadServer server = this.context.getBean(LiveReloadServer.class);
+		assertThat(server.isStarted()).isTrue();
+		assertThat(this.context.getBean(LiveReloadScriptInjectingFilter.class)).isNotNull();
+	}
+
+	@Test
 	void liveReloadDisabledByDefault() throws Exception {
 		this.context = getContext(() -> initializeAndRun(Config.class));
 		assertThatExceptionOfType(NoSuchBeanDefinitionException.class).isThrownBy(() -> {
 			assertThat(this.context).isNotNull();
 			this.context.getBean(OptionalLiveReloadServer.class);
+		});
+		assertThatExceptionOfType(NoSuchBeanDefinitionException.class).isThrownBy(() -> {
+			assertThat(this.context).isNotNull();
+			this.context.getBean(LiveReloadScriptInjectingFilter.class);
 		});
 	}
 
