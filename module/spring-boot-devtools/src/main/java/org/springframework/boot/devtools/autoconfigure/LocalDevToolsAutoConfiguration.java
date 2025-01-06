@@ -45,6 +45,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.GenericApplicationListener;
@@ -71,6 +72,7 @@ public final class LocalDevToolsAutoConfiguration {
 	 */
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnBooleanProperty(name = "spring.devtools.livereload.enabled")
+	@Import(LiveReloadServletConfiguration.class)
 	static class LiveReloadConfiguration {
 
 		@Bean

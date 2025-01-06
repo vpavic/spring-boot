@@ -41,6 +41,7 @@ artifacts {
 dependencies {
 	api(project(":core:spring-boot"))
 	api(project(":core:spring-boot-autoconfigure"))
+	implementation("org.webjars.npm:livereload-js:4.0.2") // TODO
 
 	intTestDependencies(project(":core:spring-boot-autoconfigure"))
 	intTestDependencies(project(":module:spring-boot-http-converter"))
@@ -76,6 +77,7 @@ dependencies {
 	optional("org.springframework:spring-jdbc")
 	optional("org.springframework:spring-orm")
 	optional("org.springframework:spring-web")
+	optional("org.springframework:spring-webmvc")
 	optional("org.springframework.security:spring-security-config")
 	optional("org.springframework.security:spring-security-web")
 	optional("org.springframework.data:spring-data-redis")
